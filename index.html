@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Last Call — Bartending Game</title>
+    <link rel="stylesheet" href="styles.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <div class="app">
+      <!-- ============================== START SCREEN ============================== -->
+      <section id="screen-start" class="screen is-active">
+        <div class="start-card">
+          <p class="eyebrow">Mix • Serve • Survive the rush</p>
+          <h1 class="title">LAST&nbsp;CALL</h1>
+          <p class="subtitle">
+            A bartending game. Read the order, then prep the drink step by step
+            like a real bartender. Measurements are metric (ml).
+          </p>
+
+          <div class="difficulty">
+            <p class="difficulty-label">Choose difficulty</p>
+            <div class="difficulty-grid">
+              <button class="diff-card is-selected" data-diff="basic">
+                <span class="diff-name">Basic</span>
+                <span class="diff-desc">Pick ingredients &amp; garnish. Glass &amp; method are chosen for you.</span>
+              </button>
+              <button class="diff-card" data-diff="advanced">
+                <span class="diff-name">Advanced</span>
+                <span class="diff-desc">You choose everything: glass, pour, method &amp; garnish.</span>
+              </button>
+            </div>
+          </div>
+
+          <button id="btn-start" class="btn btn-primary btn-lg">Start Shift</button>
+          <button id="btn-how" class="btn btn-ghost">How to play</button>
+          <p class="best-score" id="start-best"></p>
+        </div>
+        <footer class="bar-footer">🍸 8 cocktails &nbsp;•&nbsp; precision pours &nbsp;•&nbsp; earn your stars</footer>
+      </section>
+
+      <!-- ============================== GAME SCREEN ============================== -->
+      <section id="screen-game" class="screen">
+        <header class="topbar">
+          <div class="topbar-left">
+            <span class="stage-pill" id="stage-pill">Stage 1 / 8</span>
+            <span class="diff-pill" id="diff-pill">Basic</span>
+          </div>
+          <div class="topbar-right">
+            <button id="btn-ambient" class="btn btn-ghost btn-sm" title="Toggle bar ambience">🎵</button>
+            <button id="btn-sound" class="btn btn-ghost btn-sm" title="Toggle sound">🔊</button>
+            <button id="btn-quit" class="btn btn-ghost btn-sm">Quit</button>
+          </div>
+        </header>
+
+        <div class="progress-wrap">
+          <div class="progress-track">
+            <div class="progress-fill" id="progress-fill"></div>
+          </div>
+          <div class="points" id="points-counter">★ 0 pts</div>
+        </div>
+
+        <div class="order-ticket order-ticket-compact">
+          <div class="ticket-head">
+            <span class="ticket-label">Customer Order</span>
+            <span class="ticket-dots">• • •</span>
+          </div>
+          <h2 class="ticket-name" id="order-name">Cocktail</h2>
+          <p class="ticket-desc" id="order-desc">Order description…</p>
+        </div>
+
+        <!-- Step tracker -->
+        <div class="step-tracker" id="step-tracker"></div>
+
+        <div class="stage-area">
+          <!-- Bar station with the animated glass -->
+          <div class="station">
+            <div class="pour-stream" id="pour-stream"></div>
+            <div class="tool tool-shaker" id="tool-shaker">
+              <div class="shaker-cap"></div>
+              <div class="shaker-body"></div>
+            </div>
+            <div class="tool tool-spoon" id="tool-spoon"></div>
+            <div class="tool tool-muddler" id="tool-muddler"></div>
+            <div class="glass-mount" id="glass-mount"></div>
+            <div class="station-status" id="station-status">Choose a glass</div>
+          </div>
+
+          <!-- Step controls (rendered per step) -->
+          <div class="step-panel" id="step-panel"></div>
+        </div>
+
+        <nav class="step-nav">
+          <button id="btn-back" class="btn btn-ghost">← Back</button>
+          <button id="btn-next" class="btn btn-primary btn-lg">Next →</button>
+        </nav>
+      </section>
+
+      <!-- ============================== RESULT SCREEN ============================== -->
+      <section id="screen-result" class="screen">
+        <div class="result-card">
+          <p class="eyebrow" id="result-eyebrow">Stage cleared</p>
+          <h2 class="result-name" id="result-name">Cocktail</h2>
+          <div class="stars" id="result-stars">★★★</div>
+          <div class="result-score">
+            <span id="result-pct">0</span><span class="result-pct-sign">%</span>
+            <span class="result-points">+<span id="result-points">0</span> pts</span>
+          </div>
+          <ul class="feedback" id="feedback-list"></ul>
+          <div class="result-actions">
+            <button id="btn-retry" class="btn btn-ghost">Retry stage</button>
+            <button id="btn-next-stage" class="btn btn-primary">Next stage →</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============================== FINISH SCREEN ============================== -->
+      <section id="screen-finish" class="screen">
+        <div class="result-card">
+          <p class="eyebrow">Shift complete</p>
+          <h2 class="result-name">That's Last Call 🍸</h2>
+          <div class="stars stars-lg" id="finish-stars">★★★</div>
+          <div class="result-score">
+            <span id="finish-score">0</span><span class="result-pct-sign"> pts</span>
+          </div>
+          <p class="finish-rank" id="finish-rank">Rank</p>
+          <p class="best-score" id="finish-best"></p>
+          <div class="result-actions">
+            <button id="btn-replay" class="btn btn-primary btn-lg">Play again</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============================== HOW-TO MODAL ============================== -->
+      <div id="modal-how" class="modal">
+        <div class="modal-box">
+          <h3>How to play</h3>
+          <ol class="howto">
+            <li>Read the <strong>customer order</strong> at the top.</li>
+            <li>Work through the steps like a bartender: <strong>glass → pour → mix → garnish</strong>.</li>
+            <li>Add <strong>ingredients</strong> and dial in each amount in <strong>ml</strong> (some use dashes/leaves). Watch them pour in.</li>
+            <li>Pick a <strong>method</strong> and a <strong>garnish</strong>, then <strong>Serve</strong>.</li>
+            <li>Earn up to <strong>3 stars</strong> per drink. Pours within a small tolerance still count!</li>
+            <li><strong>Basic</strong> mode auto-picks the glass &amp; method; <strong>Advanced</strong> leaves it all to you.</li>
+          </ol>
+          <button id="btn-close-how" class="btn btn-primary">Got it</button>
+        </div>
+      </div>
+    </div>
+
+    <script type="module" src="game.js"></script>
+  </body>
+</html>
