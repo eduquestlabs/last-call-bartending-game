@@ -43,20 +43,32 @@ You only have to do this once.
 
 ## Step 4 — Copy your two keys into the game
 
-1. Go to **Project Settings** (gear icon) → **API**.
-2. Copy these two values:
-   - **Project URL**
-   - **Project API keys → `anon` `public`**
-3. Open **`config.js`** in this project and paste them in:
+> Supabase recently reorganised this. The **Project URL** and the key now live in
+> two different places. The quickest way to get both is the green **Connect**
+> button at the top of the dashboard — but here's where each one lives:
 
-   ```js
-   export const SUPABASE_URL = "https://YOURPROJECT.supabase.co";
-   export const SUPABASE_ANON_KEY = "eyJhbGciOi...the-long-anon-key...";
-   ```
+**The Project URL:**
+- **Project Settings** (gear icon) → **API** → **Project URL**
+  (`https://YOURPROJECT.supabase.co`).
 
-   > The `anon public` key is **safe** to put here and commit to GitHub — it's
-   > designed to be public and is protected by the database's security rules.
-   > Do **not** use the `service_role` key.
+**The key** — go to **Project Settings** (gear icon) → **API Keys** (this is its
+own page now, separate from "API"). Then pick **one** of these:
+
+- **Easiest (recommended):** click the **Legacy API Keys** tab and copy the
+  **`anon` `public`** key — a long string starting with `eyJ...`.
+- **Or:** on the **API Keys** (Publishable / Secret) tab, copy the
+  **Publishable key** (starts with `sb_publishable_...`).
+
+Then open **`config.js`** in this project and paste both in:
+
+```js
+export const SUPABASE_URL = "https://YOURPROJECT.supabase.co";
+export const SUPABASE_ANON_KEY = "eyJhbGciOi...the-long-anon-key...";
+```
+
+> The `anon`/publishable key is **safe** to put here and commit to GitHub — it's
+> designed to be public and is protected by the database's security rules.
+> **Never** use the **`service_role`** or **`sb_secret_...`** key here.
 
 ## Step 5 — Save, commit & deploy
 

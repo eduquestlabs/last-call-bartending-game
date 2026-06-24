@@ -89,7 +89,8 @@ export async function shareCreation(c) {
 // List community creations. sort = "top" (most likes) | "new" (newest).
 export async function listCommunity(sort = "top") {
   if (!ready || !sb) return [];
-  let q = sb.from("creations").select("id,name,score,verdict,family,recipe,like_count,created_at,players(name,location)");
+  // Disambiguate the embed via the FK name (views also relate creations<->players).
+  let q = sb.from("creations").select("id,name,score,verdict,family,recipe,like_count,created_at,players!creations_player_id_fkey(name,location)");
   q = sort === "new" ? q.order("created_at", { ascending: false }) : q.order("like_count", { ascending: false }).order("created_at", { ascending: false });
   const { data, error } = await q.limit(60);
   if (error) throw error;

@@ -12,6 +12,17 @@ any past version, go to the repository's **Releases** page and pick that version
 
 ---
 
+## v1.2.1 — Backend connected (2026-06-24)
+
+- Connected the live Supabase backend, so **Community** and **Leaderboards** are
+  now online for everyone.
+- Fixed the Community feed query: it was ambiguous about how creations link to
+  players (the leaderboard views relate the same two tables), so it's now pinned
+  to the right relationship. Sharing, liking and both leaderboards verified
+  end-to-end.
+
+---
+
 ## v1.2.0 — Online backend: Community & Leaderboards (2026-06-24)
 
 Adds the foundation for the game's online features. This ships the code and the
