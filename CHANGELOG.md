@@ -12,6 +12,22 @@ any past version, go to the repository's **Releases** page and pick that version
 
 ---
 
+## v1.4.0 — Meet Old Tom: the opening comic (2026-06-26)
+
+- **Story intro comic reel**: a short, hand-illustrated cinematic now plays right
+  after you sign up and before your first level. **Old Tom**, a veteran duck
+  bartender, welcomes a young protégé (in the DAG hoodie) into *The Last Call* on
+  a rainy night and teaches the craft — glassware, the pour, shaking vs. stirring,
+  a first wobbly pour, and finally handing over the apron: *"The bar's yours
+  tonight. Make every pour count."* (Keep an eye out for the rubber-duck cameo.)
+- Six full-art panels in a gold comic frame, with a mix of narration captions and
+  Old Tom's dialogue, progress dots, **tap-to-continue**, and a **Skip intro**
+  option.
+- Plays **once** automatically; you can **replay it any time** from
+  ⚙ Settings → "🎬 Replay intro story".
+
+---
+
 ## v1.3.0 — Journey map, new look & a gentle on-ramp (2026-06-24)
 
 - **New start screen** featuring the DAG.com duck as a cut-out mascot above the

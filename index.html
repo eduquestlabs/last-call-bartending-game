@@ -106,6 +106,25 @@
         <footer class="bar-footer" id="start-footer">🍸 cocktails &nbsp;•&nbsp; precision pours &nbsp;•&nbsp; earn your stars</footer>
       </section>
 
+      <!-- ============================== INTRO COMIC REEL ============================== -->
+      <section id="screen-intro" class="screen">
+        <div class="comic">
+          <button id="comic-skip" class="comic-skip">Skip intro ▸</button>
+          <div class="comic-stage">
+            <div class="comic-panel" id="comic-panel">
+              <img class="comic-img" id="comic-img" alt="" draggable="false" />
+              <div class="comic-shade" aria-hidden="true"></div>
+              <div class="comic-caption" id="comic-caption"></div>
+              <span class="comic-tap-hint" id="comic-tap-hint">tap to continue</span>
+            </div>
+          </div>
+          <div class="comic-foot">
+            <div class="comic-dots" id="comic-dots"></div>
+            <button id="comic-next" class="btn btn-primary btn-lg">Next →</button>
+          </div>
+        </div>
+      </section>
+
       <!-- ============================== SETTINGS ============================== -->
       <section id="screen-settings" class="screen">
         <div class="start-card settings-card">
@@ -133,6 +152,7 @@
 
           <div class="set-account">
             <p class="set-account-label" id="set-account-who"></p>
+            <button id="set-replay-intro" class="btn btn-ghost">🎬 Replay intro story</button>
             <button id="set-edit" class="btn btn-ghost">✎ Edit profile</button>
             <button id="set-switch" class="btn btn-ghost">🔄 Switch user</button>
             <button id="set-logout" class="btn btn-ghost set-danger">⎋ Log out</button>

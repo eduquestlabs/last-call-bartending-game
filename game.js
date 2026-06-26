@@ -88,6 +88,11 @@ function getSettings() {
 }
 function setSettings(s) { try { localStorage.setItem(SETTINGS_KEY, JSON.stringify(s)); } catch (e) { /* ignore */ } }
 
+// Intro comic: shown once after sign-up, before the first level (replayable in Settings).
+const INTRO_KEY = "lastcall_intro_seen";
+function introSeen() { try { return localStorage.getItem(INTRO_KEY) === "1"; } catch (e) { return false; } }
+function markIntroSeen() { try { localStorage.setItem(INTRO_KEY, "1"); } catch (e) { /* ignore */ } }
+
 // Reflect the saved profile on the start screen (greeting + mocktail badge).
 function applyProfile() {
   const p = getProfile();
@@ -2079,9 +2084,13 @@ function showFinish() {
 $("#btn-start").addEventListener("click", () => {
   Sound.init();
   Sound.click();
-  recordPlayDay();
-  renderMap();
-  showScreen("screen-map");
+  // Ensure the story plays before the very first level (covers players who
+  // registered before the intro existed).
+  maybePlayIntro(() => {
+    recordPlayDay();
+    renderMap();
+    showScreen("screen-map");
+  });
 });
 
 $("#btn-map-back").addEventListener("click", () => { Sound.click(); showScreen("screen-start"); });
@@ -2407,13 +2416,101 @@ $("#profile-form").addEventListener("submit", (e) => {
   applyProfile();
   renderStartBest();
   Sound.coin();
-  showScreen("screen-start");
+  // First-timers meet Old Tom before they reach the bar; returning editors skip it.
+  maybePlayIntro(() => { onShowStart(); showScreen("screen-start"); });
 });
 
 $("#btn-edit-profile").addEventListener("click", () => {
   Sound.click();
   openProfileForm();
 });
+
+// ============================ Intro comic reel ============================
+// A short cinematic where Old Tom, a veteran duck bartender, takes a young
+// protégé under his wing. Plays once after sign-up (before the first level)
+// and can be replayed from Settings.
+const INTRO_COMIC = [
+  { img: "assets/comic/comic1.png", kind: "narration", text: "Every great bartender starts behind someone else's bar." },
+  { img: "assets/comic/comic2.png", kind: "say", who: "Old Tom", text: "Come in out of the rain, kid. The Last Call doesn't bite\u2026 much." },
+  { img: "assets/comic/comic3.png", kind: "say", who: "Old Tom", text: "First lesson: respect the glass, the pour, the guest. Every drop has its place." },
+  { img: "assets/comic/comic4.png", kind: "say", who: "Old Tom", text: "Shake it when it's bright. Stir it when it's strong. Feel the drink." },
+  { img: "assets/comic/comic5.png", kind: "narration", text: "The first pour is always shaky. That's how the hands learn." },
+  { img: "assets/comic/comic6.png", kind: "say", who: "Old Tom", text: "The bar's yours tonight. Make every pour count." },
+];
+
+let comicIndex = 0;
+let comicOnDone = null;
+let comicPreloaded = false;
+
+function preloadComic() {
+  if (comicPreloaded) return;
+  comicPreloaded = true;
+  INTRO_COMIC.forEach((p) => { const im = new Image(); im.src = p.img; });
+}
+
+function renderComicPanel(i) {
+  const p = INTRO_COMIC[i];
+  if (!p) return;
+  const img = $("#comic-img");
+  const cap = $("#comic-caption");
+  img.src = p.img;
+  img.alt = p.kind === "say" ? `${p.who}: ${p.text}` : p.text;
+  cap.innerHTML = p.kind === "say"
+    ? `<p class="comic-say"><span class="comic-who">${p.who}</span>\u201c${p.text}\u201d</p>`
+    : `<p class="comic-narration">${p.text}</p>`;
+
+  // Replay the entry animation.
+  const panel = $("#comic-panel");
+  panel.classList.remove("comic-anim");
+  void panel.offsetWidth;
+  panel.classList.add("comic-anim");
+
+  // Dots.
+  const dots = $("#comic-dots");
+  dots.innerHTML = "";
+  INTRO_COMIC.forEach((_, k) => {
+    const d = document.createElement("span");
+    d.className = "comic-dot" + (k === i ? " is-active" : k < i ? " is-done" : "");
+    dots.appendChild(d);
+  });
+
+  const last = i === INTRO_COMIC.length - 1;
+  $("#comic-next").textContent = last ? "Start my shift \u2192" : "Next \u2192";
+  $("#comic-tap-hint").style.display = last ? "none" : "";
+}
+
+function playIntro(onDone) {
+  comicOnDone = onDone || null;
+  comicIndex = 0;
+  preloadComic();
+  renderComicPanel(0);
+  showScreen("screen-intro");
+}
+
+// Plays the intro only the first time; otherwise runs the callback immediately.
+function maybePlayIntro(onDone) {
+  if (introSeen()) { if (onDone) onDone(); return; }
+  playIntro(onDone);
+}
+
+function comicNext() {
+  Sound.click();
+  if (comicIndex >= INTRO_COMIC.length - 1) { finishIntro(); return; }
+  comicIndex += 1;
+  renderComicPanel(comicIndex);
+}
+
+function finishIntro() {
+  markIntroSeen();
+  const done = comicOnDone;
+  comicOnDone = null;
+  if (done) done();
+  else { onShowStart(); showScreen("screen-start"); }
+}
+
+$("#comic-next").addEventListener("click", comicNext);
+$("#comic-panel").addEventListener("click", comicNext);
+$("#comic-skip").addEventListener("click", () => { Sound.click(); finishIntro(); });
 
 // ============================ Settings ============================
 function syncSoundButtons() {
@@ -2472,6 +2569,7 @@ $("#set-ambient").addEventListener("click", () => {
   if (on) Sound.click();
 });
 
+$("#set-replay-intro").addEventListener("click", () => { Sound.click(); playIntro(() => openSettings()); });
 $("#set-edit").addEventListener("click", () => { Sound.click(); openProfileForm(); });
 $("#set-switch").addEventListener("click", () => { Sound.click(); logoutToGate(); });
 $("#set-logout").addEventListener("click", () => {
@@ -2527,6 +2625,13 @@ if (!getProfile()) {
   openProfileForm(true);
 } else {
   onShowStart();
+}
+
+// Debug-only deep link to preview the intro reel directly (localhost or ?debug).
+if (debugEnabled() && location.hash.includes("introtest")) {
+  playIntro(() => { onShowStart(); showScreen("screen-start"); });
+  const m = location.hash.match(/introtest(\d+)/);
+  if (m) { comicIndex = Math.min(parseInt(m[1], 10), INTRO_COMIC.length - 1); renderComicPanel(comicIndex); }
 }
 
 // Connect to the backend in the background (no-op if not configured yet).
